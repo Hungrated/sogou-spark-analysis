@@ -54,19 +54,25 @@ object SogouAnalysis {
       .reduceByKey((x, y) => x + y)
       .sortByKey()
       .saveAsTextFile(OUTPUT_PATH + "/03")
+    //      .collect()
+    //      .foreach(x => println(x._1 + "\t" + x._2))
 
     /**
       * 4 比较各小时用户平均搜索量
       */
-    rdd.map(x => (x(9), (x(1), 1)))
+    rdd.map(x => ((x(9), x(1)), 1))
+      .reduceByKey((x, y) => x + y)
+      .map(x => (x._1._1, x._2))
       .combineByKey(
-        v => (v._2, 1),
-        (acc: (Int, Int), v) => (acc._1 + v._2, acc._2),
+        v => (v, 1),
+        (acc: (Int, Int), v) => (acc._1 + v, acc._2 + 1),
         (acc1: (Int, Int), acc2: (Int, Int)) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
       )
       .map { case (key, value) => (key, value._1 / value._2.toFloat) }
       .sortByKey()
       .saveAsTextFile(OUTPUT_PATH + "/04")
+    //      .collect()
+    //      .foreach(x => println(x._1 + "\t" + x._2))
 
     /**
       * 5 求独立用户搜索量并按此排序
