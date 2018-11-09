@@ -9,7 +9,7 @@ class SogouAnalysisHelper {
     *
     * @param dir 文件或文件夹路径
     */
-  def deletDirIfExists(dir: String): Unit = {
+  def deleteDirIfExists(dir: String): Unit = {
     val f = new File(dir)
     if (f.exists()) {
       deleteDir(f)
